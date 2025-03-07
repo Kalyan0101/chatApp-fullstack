@@ -2,42 +2,61 @@ import { useEffect, useState } from 'react'
 // import './App.css'
 import Drawer from './components/Drawer'
 import HeroSection from './components/HeroSection'
+import helper from './server/helper'
+import { storeLogin, storeLogout } from './store/authSlice'
+import { useDispatch } from 'react-redux'
+import WelcomePage from './pages/intro/WelcomePage'
+import Linking from './pages/intro/Linking'
+import Login from './pages/intro/Login'
+import { useNavigate } from 'react-router'
 
 
 function App() {
 
-  {
-    useEffect(() => {
+    // useEffect(() => {
+    //   // fetch('http://127.0.0.1:8000/validate/',{
+    //   fetch('http://127.0.0.1:8000/login/',{
+    //     // method: "GET",
+    //     method: "POST",
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       // 'Authorization': `${token}`,
+    //     },
+    //     body: JSON.stringify({
+    //       phonenumber: '159632516',
+    //       username: 'admin',
+    //     })
+    //   })
+    //   .then((res) => {
+    //     console.log(res);        
+    //     return res.json()
+    //   })
+    //   .then((data) => {
+    //     console.log(data);
+    //   })
+    // }, [])
 
-      const token = "14a3669adf537dbc3e2578b4409a387b15bb5bc4"
+  const [loading, setLoading] = useState(true)
+  const dispatch = useDispatch(null)
+  const navigate = useNavigate()
 
-      fetch('http://127.0.0.1:8000/validate/',{
-      // fetch('http://127.0.0.1:8000/login/',{
-        method: "GET",
-        // method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': `${token}`,
-        },
-        // body: JSON.stringify({
-        //   phonenumber: '159632510',
-        //   username: 'admin',
-        // })
-      })
-      .then((res) => {
-        // NOTE: status came in heder so it need to handel first then data message
+  useEffect(() => {
+    const token = localStorage.getItem('token')
 
-        console.log(res);        
-        return res.json()
-      })
+    if (token){
+      helper.validate(token)
       .then((data) => {
-        console.log(data);
-        
-        // console.log(data.message);
+        dispatch(storeLogin({ data }))
       })
-    }, [])
-  }
-
+      
+      .catch((error) => {
+        navigate('/intro/')
+        console.log(error.message);        
+      })
+      .finally(() => setLoading(false))
+    }
+  }, [])
+  
 
   return (
     <>
@@ -45,6 +64,8 @@ function App() {
         <Drawer />
         <HeroSection />
       </div> */}
+      <div className='w-full p-5 bg-white font-bold text-pink-500 text-center uppercase'>Radha</div>
+      {/* <Login /> */}
     </>
   )
 }

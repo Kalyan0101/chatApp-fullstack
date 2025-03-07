@@ -16,19 +16,19 @@ class SignupView(APIView):
 
             if user is not None:
                 phnumber = request.data.get('phonenumber')
-                return loginUser(request, phnumber)
+                return loginUser(phnumber)
 
             return Response(customUserSerializer(user).data, status=status.HTTP_201_CREATED)
         
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class LoginView(APIView):
     def post(self, request):
         
         phonenumber = request.data.get('phonenumber')
-        username = request.data.get('username')
 
-        if not phonenumber or not username:
+        if not phonenumber:
             return Response({"detail": "Username and phonenumber are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         return loginUser(phonenumber)
@@ -50,6 +50,7 @@ class ValidatView(APIView):
                 'token': token,
             }
             return Response(userData, status=status.HTTP_200_OK)
+        
         except CustomeToken.DoesNotExist:
             return Response({'message': 'Invalide token'}, status=status.HTTP_403_FORBIDDEN)
         
@@ -57,15 +58,17 @@ class LogoutView(APIView):
     
     def post(self, request):
         
-        token = request.data.get('token')
+        if not request.headers.get('Authorization'):
+            return Response({'message': 'missing header'}, status=status.HTTP_403_FORBIDDEN)
         
         try:
-            user = CustomeToken.objects.get(token = token)
-            user.delete()
+            token = request.headers['Authorization']
+            user_token = CustomeToken.objects.get(token = token)
+            user_token.delete()
             return Response({"message": "Logged out successfully"},status=status.HTTP_202_ACCEPTED)
                         
         except:
-            return Response({"message": "Invalid Token"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 # helper method
 def loginUser(phonenumber):
@@ -73,7 +76,7 @@ def loginUser(phonenumber):
     try:
         user = CustomeUser.objects.get(phonenumber=phonenumber)
     except CustomeUser.DoesNotExist:
-        return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
         customeToken = CustomeToken.objects.get(user = user)
