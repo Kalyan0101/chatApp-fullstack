@@ -6,7 +6,6 @@ function Input({
     className
 }, ref) {
     const id = useId();
-
   return (
     <div className='flex gap-1 justify-between items-center my-3'>
         {label && <>
@@ -24,5 +23,4 @@ function Input({
     </div>
   )
 }
-
 export default forwardRef(Input)

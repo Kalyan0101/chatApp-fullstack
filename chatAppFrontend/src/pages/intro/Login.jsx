@@ -24,7 +24,7 @@ function Login() {
         .then((res) => {
             localStorage.setItem('token', res.token);
             dispatch(storeLogin({ res }))
-            navigate('')
+            navigate('/landing')
         })
         .catch((err) => {
             console.log(err);

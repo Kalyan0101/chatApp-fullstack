@@ -1,14 +1,9 @@
 import { useEffect, useState } from 'react'
 // import './App.css'
-import Drawer from './components/Drawer'
-import HeroSection from './components/HeroSection'
 import helper from './server/helper'
 import { storeLogin, storeLogout } from './store/authSlice'
 import { useDispatch } from 'react-redux'
-import WelcomePage from './pages/intro/WelcomePage'
-import Linking from './pages/intro/Linking'
-import Login from './pages/intro/Login'
-import { useNavigate } from 'react-router'
+import { Outlet, useNavigate } from 'react-router'
 
 
 function App() {
@@ -47,27 +42,29 @@ function App() {
       helper.validate(token)
       .then((data) => {
         dispatch(storeLogin({ data }))
+        navigate('landing')
       })
       
       .catch((error) => {
-        navigate('/intro/')
-        console.log(error.message);        
+        navigate('intro')
+        console.log(error.message);
       })
       .finally(() => setLoading(false))
+    }else{
+      setLoading(false)
+      navigate('intro')
     }
   }, [])
   
 
-  return (
-    <>
-      {/* <div className="">
-        <Drawer />
-        <HeroSection />
-      </div> */}
-      <div className='w-full p-5 bg-white font-bold text-pink-500 text-center uppercase'>Radha</div>
-      {/* <Login /> */}
+  return loading ? 
+    <>      
+      <div className='w-full p-5 bg-white font-bold text-pink-500 text-center uppercase'>Radha radha</div>
     </>
-  )
+  :
+    <>
+      <Outlet />
+    </>
 }
 
 export default App

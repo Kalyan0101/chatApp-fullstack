@@ -8,7 +8,7 @@ function Linking() {
   const navigate = useNavigate()
 
   const clickHandel = () => {
-    navigate('/login')
+    navigate('/intro/login')
   }
 
   return (

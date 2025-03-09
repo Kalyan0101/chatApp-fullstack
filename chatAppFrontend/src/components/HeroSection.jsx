@@ -99,20 +99,6 @@ function HeroSection() {
                                 <ChatCard />
                                 <ChatCard />
                                 <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
-                                <ChatCard />
                             </ScrollArea>
                         </section>
 
@@ -149,19 +135,6 @@ function HeroSection() {
                                 <Message />
                                 <Message side={"left"} />
                                 <Message />
-                                <Message />
-                                <Message />
-                                <Message side={"left"} />
-                                <Message />
-                                <Message side={"left"} />
-                                <Message />
-                                <Message />
-                                <Message />
-                                <Message side={"left"} />
-                                <Message />
-                                {/* <Message
-                                side={"left"}
-                            /> */}
                             </ScrollArea>
                         </section>
                         {/* footer */}
