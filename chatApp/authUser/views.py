@@ -56,7 +56,7 @@ class ValidatView(APIView):
         
 class LogoutView(APIView):
     
-    def post(self, request):
+    def get(self, request):
         
         if not request.headers.get('Authorization'):
             return Response({'message': 'missing header'}, status=status.HTTP_403_FORBIDDEN)

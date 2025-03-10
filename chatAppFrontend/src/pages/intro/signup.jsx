@@ -5,23 +5,25 @@ import { Button } from '@/components/ui/button'
 import Helper from '@/server/helper'
 import { useDispatch } from 'react-redux'
 import { storeLogin } from '@/store/authSlice'
-import { useNavigate, NavLink } from 'react-router'
+import { useNavigate, NavLink  } from 'react-router'
 
 function Login() {
 
     const dispatch = useDispatch(null)
     const navigate = useNavigate()
     const phNo = useRef(null)
+    const name = useRef(null)
 
     const submitHandel = (e) => {
         e.preventDefault()
 
+        const userName = name.current.value;
         const userNumber = phNo.current.value;
 
-        Helper.login(userNumber)
+        Helper.signup(userNumber, userName)
         .then((res) => {
             localStorage.setItem('token', res.token);
-            dispatch(storeLogin( res ))
+            dispatch(storeLogin({ res }))
             navigate('/landing')
         })
         .catch((err) => {
@@ -37,24 +39,27 @@ function Login() {
             <h1 className='text-xl'>
                 <NavLink  
                     to={'/intro/signup'}
-                    className={`px-3 py-1`}
+                    className={({ isActive }) => `${isActive ? "px-3 py-1 rounded-md text-green-400 font-semibold" : ""}`}
                 >Signup</NavLink >
                 /
                 <NavLink  
                     to={'/intro/login'}
-                    className={({ isActive }) => `${isActive ? "px-3 py-1 rounded-md text-green-400 font-semibold" : ""}`}
-                >Login
-                </NavLink >
+                    className={`px-3 py-1`}
+                >Login</NavLink >
             </h1>            
             <form className='flex flex-col'>
                 <Input 
                     ref={phNo}
                     label={'Enter Phone Number: '}
                     />
+                <Input 
+                    ref={name}
+                    label={'Enter Username: '}
+                />
                 <Button 
                     onClick={submitHandel}
                     type='button'
-                >Login</Button>
+                >Signup</Button>
             </form>
         </div>
     </div>

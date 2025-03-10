@@ -8,6 +8,10 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useDispatch, useSelector } from "react-redux";
+import helper from "@/server/helper";
+import { storeLogout } from "@/store/authSlice";
+import { useNavigate } from "react-router";
 
 
 const Drawer = () => {
@@ -15,9 +19,9 @@ const Drawer = () => {
     const [msgCount, setMsgCount] = useState(12);
     const [status, setStatus] = useState(true);
 
-    const toggleDrawer = () => {
-        setIsOpen(!isOpen);
-    };
+    const dispatch = useDispatch(null);
+    const navigate = useNavigate();
+    const user = useSelector(state => state.userData);
 
     const navItemTop = [
         {
@@ -36,7 +40,6 @@ const Drawer = () => {
             status: true
         },
     ]
-
     const navItemDown = [
         {
             icon: faStar,
@@ -55,6 +58,28 @@ const Drawer = () => {
             text: "Profile"
         },
     ]
+
+    const toggleDrawer = () => {
+        setIsOpen(!isOpen);
+    };
+
+    
+    
+    const logout = () => {
+        helper.logout(user.token)
+        .then((res) => {
+            dispatch(storeLogout());
+            localStorage.removeItem("token");
+            navigate('/intro')
+            
+        })
+        // .catch((err) => ())
+    
+    }
+    
+    
+
+    
 
 
     return (
@@ -96,22 +121,26 @@ const Drawer = () => {
                                 )}
                             </div>
                             {item.status && (
-                                <div className={`
-                                            ${item.text == "Chats" && msgCount ? "w-5 h-4" : ""} ${item.text == "Status" && status ? "w-1.5 h-1.5" : ""} rounded-lg bg-green-500 text-xs text-white dark:text-black flex items-center justify-center
-                                        `}>
+                                <div 
+                                    className={`
+                                        ${item.text == "Chats" && msgCount ? "w-5 h-4" : ""} ${item.text == "Status" && status ? "w-1.5 h-1.5" : ""} rounded-lg bg-green-500 text-xs text-white dark:text-black flex items-center justify-center
+                                    `}>
                                     {item.text == "Chats" && msgCount != 0 &&
                                         <p>{msgCount}</p>
                                     }
                                 </div>
-                            )
-                            }
+                            )}
                         </div>
                     ))}
                 </div>
                 {/* bottom */}
                 <div className=" flex flex-col justify-end gap-8 pb-5">
                     {navItemDown.map((item, index) => (
-                        <div key={index} className="w-full h-fit flex items-center px-4 py-1 cursor-pointer gap-3">
+                        <div key={index} 
+                            className="w-full h-fit flex items-center px-4 py-1 cursor-pointer gap-3"
+                            onClick = {item.text == 'Profile' ? logout : null}
+                            >
+                            
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger><FontAwesomeIcon icon={item.icon} /></TooltipTrigger>

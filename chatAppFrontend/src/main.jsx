@@ -4,7 +4,7 @@ import App from './App.jsx'
 import { Provider } from 'react-redux'
 import { store } from './store/store'
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router'
-import { IntroLayout, Landing, Linking, Login, WelcomePage } from './pages'
+import { IntroLayout, Landing, Linking, Login, Signup, WelcomePage } from './pages'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -14,6 +14,7 @@ const router = createBrowserRouter(
                     <Route path='' element={<WelcomePage />}/>
                     <Route path='linking' element={<Linking />}/>
                     <Route path='login' element={<Login />}/>
+                    <Route path='signup' element={<Signup />}/>
                 </Route>
                 <Route path='/landing' element={<Landing />}/>
             </Route>

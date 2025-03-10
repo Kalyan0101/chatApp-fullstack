@@ -8,29 +8,6 @@ import { Outlet, useNavigate } from 'react-router'
 
 function App() {
 
-    // useEffect(() => {
-    //   // fetch('http://127.0.0.1:8000/validate/',{
-    //   fetch('http://127.0.0.1:8000/login/',{
-    //     // method: "GET",
-    //     method: "POST",
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       // 'Authorization': `${token}`,
-    //     },
-    //     body: JSON.stringify({
-    //       phonenumber: '159632516',
-    //       username: 'admin',
-    //     })
-    //   })
-    //   .then((res) => {
-    //     console.log(res);        
-    //     return res.json()
-    //   })
-    //   .then((data) => {
-    //     console.log(data);
-    //   })
-    // }, [])
-
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch(null)
   const navigate = useNavigate()
@@ -41,20 +18,21 @@ function App() {
     if (token){
       helper.validate(token)
       .then((data) => {
-        dispatch(storeLogin({ data }))
-        navigate('landing')
+        dispatch(storeLogin( data ))
+        navigate('/landing')
       })
       
       .catch((error) => {
-        navigate('intro')
+        navigate('/intro')
         console.log(error.message);
       })
       .finally(() => setLoading(false))
+
     }else{
       setLoading(false)
-      navigate('intro')
+      navigate('/intro')
     }
-  }, [])
+  }, [navigate, localStorage])
   
 
   return loading ? 

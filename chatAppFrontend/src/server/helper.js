@@ -2,7 +2,7 @@ const url = String(import.meta.env.VITE_SERVER_URL);
 
 class Helper {
     
-    async login(ph_number, username) {
+    async login(ph_number) {
         
         const loginUrl = `${url}/login/`;
         
@@ -13,19 +13,17 @@ class Helper {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    phonenumber: ph_number,
-                    username: username
+                    phonenumber: ph_number
                 })
             });
             const data = await response.json();
             if (response.ok) {
                 return data
             }
-            throw new Error(data.message)
+            throw new Error(data)
             
         } catch (error) {
-            console.error('Login Error: ', error);
-            throw error;
+            throw error.message;
         }
     }
 
@@ -87,13 +85,17 @@ class Helper {
                     'Authorization': `${token}`,
                 },
             })            
-            if (response) {
-                return response
+
+            const data = await response.json()
+
+            if (response.ok) {
+                return data
             }
+
+            throw new Error(data)
             
         } catch (error) {
-            console.error('logout Error: ', error);
-            throw error;
+            throw error.message;
         }
     }
 }
