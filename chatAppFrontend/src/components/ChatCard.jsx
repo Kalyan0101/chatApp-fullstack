@@ -13,7 +13,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 
 
-function ChatCard() {
+function ChatCard({
+    username
+}) {
     return (
         <Card className="hover:bg-[#363636]">
             <CardHeader className="flex flex-row justify-start items-center gap-3">
@@ -24,10 +26,9 @@ function ChatCard() {
                 </Avatar>
                 {/* detail chat */}
                 <div className="w-full">
-                    <CardTitle>Card Title</CardTitle>
+                    <CardTitle>{username}</CardTitle>
                     <div className="w-full flex text-xs justify-between items-center gap-2">
                         <FontAwesomeIcon icon={faCheck} />
-                        {/* <CardDescription className="text-start">Card Description</CardDescription> */}
                         <p className='mr-auto'>CardDescription</p>
                         <div className="flex items-center justify-end gap-2 ml-1">
                             <FontAwesomeIcon icon={faBellSlash} />

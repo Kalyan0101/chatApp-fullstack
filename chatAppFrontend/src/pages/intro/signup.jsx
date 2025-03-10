@@ -23,7 +23,7 @@ function Login() {
         Helper.signup(userNumber, userName)
         .then((res) => {
             localStorage.setItem('token', res.token);
-            dispatch(storeLogin({ res }))
+            dispatch(storeLogin( res ))
             navigate('/landing')
         })
         .catch((err) => {

@@ -75,6 +75,27 @@ class Helper {
         }
     }
 
+    async allUsers(token){
+        const allusersUrl = `${url}/allusers/`
+        try {
+            const response = await fetch(allusersUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 'Authorization': `${token}`,
+                },
+            })
+            const data = await response.json();
+            if (response.ok) {
+                return data
+            }
+            throw new Error(data)           
+            
+        } catch (error) {
+            throw error.message;
+        }
+    }
+
     async logout(token){
         const logoutUrl = `${url}/logout/`
         try {

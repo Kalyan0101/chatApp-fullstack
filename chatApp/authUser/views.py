@@ -69,6 +69,22 @@ class LogoutView(APIView):
                         
         except:
             return Response({"message": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class allUsers(APIView):
+    
+    def get(self, request):
+        
+        try:
+            allusers = CustomeUser.objects.all().values()
+            
+            if allusers is not None:
+
+                return Response(allusers, status=status.HTTP_200_OK)
+            
+            return Response({'message': 'No user found'}, status=status.HTTP_404_NOT_FOUND)
+                        
+        except:
+            return Response({"message": "DB Error"}, status=status.HTTP_404_NOT_FOUND)
 
 # helper method
 def loginUser(phonenumber):
