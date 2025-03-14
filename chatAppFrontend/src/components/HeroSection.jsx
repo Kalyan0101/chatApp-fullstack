@@ -9,9 +9,8 @@ import {
 import ChatCard from './ChatCard';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import ChatArea from './ChatArea'
-import helper from '@/server/helper';
-
-
+import helper from '@/server/authHelper';
+import { useSelector } from 'react-redux';
 
 function HeroSection() {
 
@@ -20,6 +19,8 @@ function HeroSection() {
     const [searchInput, setSearchInput] = useState('');
     const [users, setUsers] = useState([])
     const [currentChatUser, setCurrentChatUser] = useState({})
+
+    const loginUser = useSelector(state => state.userData)
 
 
     // ckeck for cross button
@@ -35,15 +36,13 @@ function HeroSection() {
         setSearchInput(value);
     }
 
-    const selectUser = (item) => setCurrentChatUser(item);
-
+    // fetch all users
     useEffect(() => {
         helper.allUsers()
             .then((res) => {
-                setUsers(res);
+                setUsers(res);            
             })
     }, [])
-
 
 
     return (
@@ -95,10 +94,10 @@ function HeroSection() {
                         {/* chat section */}
                         <section className='h-screen'>
                             <ScrollArea className="h-[82%] rounded-md border p-1">
-                                {users?.map((item) => (
+                                {users?.filter((item) => item.id !== loginUser?.id).map((item) => (
                                     <div 
                                         key={item.id}
-                                        onClick={() => selectUser(item)}
+                                        onClick={() => setCurrentChatUser(item)}
                                     >
                                         <ChatCard {...item} />
                                     </div>))
@@ -110,7 +109,7 @@ function HeroSection() {
                 </ResizablePanel>
                 <ResizableHandle />
                 <ResizablePanel className='h-[95vh] min-w-[400px]' >
-                    <ChatArea user = {currentChatUser} />
+                    <ChatArea currentChatUser = {currentChatUser} />
                 </ResizablePanel>
             </ResizablePanelGroup>
         </div>

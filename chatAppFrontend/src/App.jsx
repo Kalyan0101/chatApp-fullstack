@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 // import './App.css'
-import helper from './server/helper'
+import helper from './server/authHelper'
 import { storeLogin, storeLogout } from './store/authSlice'
 import { useDispatch } from 'react-redux'
 import { Outlet, useNavigate } from 'react-router'

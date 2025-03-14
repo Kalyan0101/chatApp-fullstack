@@ -2,10 +2,11 @@ import React, { useRef } from 'react'
 import wh from '@/assets/whatsApp.png'
 import Input from '@/components/Input'
 import { Button } from '@/components/ui/button'
-import Helper from '@/server/helper'
+import AuthHelper from '@/server/authHelper'
 import { useDispatch } from 'react-redux'
 import { storeLogin } from '@/store/authSlice'
 import { useNavigate, NavLink  } from 'react-router'
+import Swal from 'sweetalert2'
 
 function Login() {
 
@@ -20,14 +21,20 @@ function Login() {
         const userName = name.current.value;
         const userNumber = phNo.current.value;
 
-        Helper.signup(userNumber, userName)
+        AuthHelper.signup(userNumber, userName)
         .then((res) => {
             localStorage.setItem('token', res.token);
             dispatch(storeLogin( res ))
             navigate('/landing')
         })
         .catch((err) => {
-            console.log(err);
+            Swal.fire({
+                text: err,
+                icon: "error",
+                width: 'fit-content',
+                heightAuto: false,
+                padding: '10px',
+              });
         })
         
     }

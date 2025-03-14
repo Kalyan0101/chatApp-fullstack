@@ -1,10 +1,10 @@
 const url = String(import.meta.env.VITE_SERVER_URL);
 
-class Helper {
+class AuthHelper {
     
     async login(ph_number) {
         
-        const loginUrl = `${url}/login/`;
+        const loginUrl = `${url}/authapi/login/`;
         
         try {
             const response = await fetch(loginUrl, {
@@ -29,7 +29,7 @@ class Helper {
 
     async signup(ph_number, username) {
         
-        const signupUrl = `${url}/signup/`        
+        const signupUrl = `${url}/authapi/signup/`
         try {
             const response = await fetch(signupUrl, {
                 method: 'POST',
@@ -55,7 +55,7 @@ class Helper {
     }
 
     async validate(token){
-        const validateUrl = `${url}/validate/`
+        const validateUrl = `${url}/authapi/validate/`
         try {
             const response = await fetch(validateUrl, {
                 method: 'GET',
@@ -76,7 +76,7 @@ class Helper {
     }
 
     async allUsers(token){
-        const allusersUrl = `${url}/allusers/`
+        const allusersUrl = `${url}/authapi/allusers/`
         try {
             const response = await fetch(allusersUrl, {
                 method: 'GET',
@@ -97,7 +97,7 @@ class Helper {
     }
 
     async logout(token){
-        const logoutUrl = `${url}/logout/`
+        const logoutUrl = `${url}/authapi/logout/`
         try {
             const response = await fetch(logoutUrl, {
                 method: 'GET',
@@ -121,4 +121,4 @@ class Helper {
     }
 }
 
-export default new Helper;
+export default new AuthHelper;

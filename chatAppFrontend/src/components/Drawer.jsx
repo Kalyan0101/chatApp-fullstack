@@ -9,7 +9,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useDispatch, useSelector } from "react-redux";
-import helper from "@/server/helper";
+import helper from "@/server/authHelper";
 import { storeLogout } from "@/store/authSlice";
 import { useNavigate } from "react-router";
 

@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faMicrophone, faPaperclip, faFaceSmile, faLocationArrow } from '@fortawesome/free-solid-svg-icons'
 import {
@@ -10,16 +10,24 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Info, Message } from './index'
+import chatHelper from '@/server/chatHelper'
+import Swal from 'sweetalert2'
+import { useSelector } from 'react-redux'
 
 
-function ChatArea({ user }) {    
+function ChatArea({ currentChatUser }) {    
 
     const [chatMsg, setChatMsg] = useState('');
     const [isTextEmpty, setIsTextEmpty] = useState(true);
-
+    const [isUserEmpty, setIsUserEmpty] = useState(true);
+    const [chatRoom, setChatRoom] = useState('');
+    const [ws, setWs] = useState('');
+    const [getMsg, setGetMsg] = useState([])
+    const loginUser = useSelector(state => state.userData);  
+    
+    // toggel between arrow and mic and update setMsg
     const sendArrow = (e) => {
         const value = e.target.value;
-
         if(value === ""){
             setIsTextEmpty(true);
         }else{
@@ -28,7 +36,71 @@ function ChatArea({ user }) {
         setChatMsg(value);
     }
 
-    return Object.keys(user).length !== 0 ? (
+    // check if user is empty or not
+    useEffect(() => {
+        if(Object.keys(currentChatUser).length !== 0){
+            setIsUserEmpty(false);
+            return 
+        }
+        setIsUserEmpty(true);
+    }, [currentChatUser])
+    
+    // getting chat room
+    useEffect(() => {
+        if(isUserEmpty ) return
+        
+        chatHelper.createRoom(loginUser.phonenumber, currentChatUser.phonenumber)
+        .then((data) => {            
+            setChatRoom(data.name)
+            setIsUserEmpty(false);
+        })
+        .catch((err) => {
+            Swal.fire({
+                text: err.data?.message,
+                icon: "error",
+                width: 'fit-content',
+                heightAuto: false,
+                padding: '10px',
+              });
+            setIsUserEmpty(true);
+        })
+    }, [isUserEmpty, currentChatUser])
+
+    useEffect(() => {
+
+        if(chatRoom == '') return
+
+        const socket = new WebSocket(`ws://localhost:8000/ws/chat/${chatRoom}/`)
+    
+        socket.onopen = (e) => {
+            // console.log(e?.data, "open");
+            // console.log(e);
+            setWs(socket);
+        }    
+        socket.onmessage = (e) => {
+          const data = JSON.parse(e.data);
+
+          console.log(data);
+          
+
+          if(data.message.length !== 0){
+              setGetMsg((pre) => [...pre, data])
+            }
+        };
+        socket.onclose = (e) => {
+        }    
+        return () => {
+          socket.close();
+        };
+      }, [chatRoom])
+
+    const sendMsg = () => {
+        ws.send(JSON.stringify({'message': chatMsg, 'number': loginUser.phonenumber}));
+        setChatMsg('')       
+
+    }   
+
+    return !isUserEmpty ? (
         <>
             <section  className='h-full flex flex-col justify-between'>
                 {/* header */}
@@ -41,8 +113,8 @@ function ChatArea({ user }) {
                             </Avatar>
 
                             <div className="w-full">
-                                <CardTitle>{user.username}</CardTitle>
-                                <CardDescription>Card Description</CardDescription>
+                                <CardTitle>{currentChatUser.username}</CardTitle>
+                                <CardDescription>{currentChatUser.phonenumber}</CardDescription>
                             </div>
                             <FontAwesomeIcon icon={faMagnifyingGlass}
                                 className='scale-x-[-1] text-xs'
@@ -55,11 +127,12 @@ function ChatArea({ user }) {
                 {/* main body */}
                 <main className='bg-[#2C2C2C] w-full h-[80%] pt-1 flex-1'>
                     <ScrollArea className="h-full rounded-md border px-7">
-                        <Message side={"left"} />
-                        <Message />
-                        <Message />
-                        <Message side={"left"} />
-                        <Message />
+                        {getMsg.map((item, index) => <div key={index}>
+                            <Message 
+                                message={item.message}
+                                number={item.number}
+                            />                            
+                        </div>)}
                     </ScrollArea>
                 </main>
 
@@ -77,11 +150,14 @@ function ChatArea({ user }) {
                                 className='w-full p-3 dark:bg-transparent outline-none placeholder:text-white placeholder:text-sm'
                             />
                         </div>
-                        {
-                            isTextEmpty ? 
+                        {isTextEmpty ? 
                             <FontAwesomeIcon icon={faMicrophone} />
                             :
-                            <FontAwesomeIcon className='rotate-[45deg]' icon={faLocationArrow} />
+                            <FontAwesomeIcon 
+                            className='rotate-[45deg]' 
+                            icon={faLocationArrow} 
+                            onClick={ sendMsg }
+                            />
                         }
                     </div>
                 </footer>

@@ -1,8 +1,10 @@
+import React, { useEffect, useState } from 'react'
 import Drawer from '@/components/Drawer'
 import HeroSection from '@/components/HeroSection'
-import React from 'react'
+import chatHelper from '@/server/chatHelper';
 
 function Landing() {
+  
   return (
     <>
       <Drawer />
