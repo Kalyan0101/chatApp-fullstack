@@ -47,7 +47,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         number = text_data_json['number']
         time = text_data_json['time']
 
-        await self.save_message(message, number)
+        await self.save_message(message, number, time)
 
         await self.channel_layer.group_send(
             self.room_group_name,{
@@ -58,7 +58,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             })
         
     @database_sync_to_async
-    def save_message(self, message, number):
+    def save_message(self, message, number, time):
         # Save the message to the database
         try:
             room = ChatRoom.objects.get(room_name=self.room_name)
@@ -69,7 +69,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         Message.objects.create(
             room=room,
             phonenumber=user,
-            content=message
+            content=message,
+            time = time
         )
 
     async def chat_message(self, e):

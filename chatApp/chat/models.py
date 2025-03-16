@@ -13,6 +13,7 @@ class Message(models.Model):
     phonenumber = models.ForeignKey(CustomeUser, related_name='number', on_delete=models.CASCADE)
     room = models.ForeignKey(ChatRoom, related_name='room', on_delete=models.CASCADE)
     content = models.TextField()
+    time = models.CharField(max_length=20)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     

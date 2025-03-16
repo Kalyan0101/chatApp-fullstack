@@ -82,9 +82,8 @@ function ChatArea({ currentChatUser }) {
         }    
         socket.onmessage = (e) => {
             const data = JSON.parse(e.data);
-
+            
             if(Array.isArray(data.message)){
-                console.log(data.message);
                 setChatHistory(data.message)
                 
             }            

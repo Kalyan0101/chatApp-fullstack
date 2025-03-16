@@ -19,5 +19,5 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'phonenumber', 'room', 'content', 'timestamp']
+        fields = ['id', 'phonenumber', 'room', 'content', 'time', 'timestamp']
 

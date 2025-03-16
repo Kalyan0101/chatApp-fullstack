@@ -15,7 +15,7 @@ class RoomAdmin(admin.ModelAdmin):
     get_second_name.short_description = 'second user'
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'getNumber', 'room', 'content', 'timestamp')
+    list_display = ('id', 'getNumber', 'room', 'content', 'time', 'timestamp')
 
     def getNumber(self, obj):
         return obj.phonenumber.phonenumber
