@@ -10,9 +10,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f"chat_{self.room_name}"
 
+        # Join the room group
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+
         await self.accept()
 
         messages = await self.get_message(self.room_name)
+
+        # print(messages)
 
         await self.send(text_data = json.dumps({
             'message': messages
@@ -25,7 +33,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except ChatRoom.DoesNotExist:
             return
 
-        messages = room.messages.all().order_by('timestamp')
+        messages = room.room.all().order_by('timestamp')
         serial = MessageSerializer(messages, many=True).data
         return serial
     
@@ -34,15 +42,39 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
-        print(text_data_json)
 
         message = text_data_json['message']
         number = text_data_json['number']
+        time = text_data_json['time']
 
-        # room = database_sync_to_async(ChatRoom.objects.get)(roomname = self.room_name)
-        # Message.objects.create()
+        await self.save_message(message, number)
 
+        await self.channel_layer.group_send(
+            self.room_group_name,{
+                'type': 'chat_message',
+                'message': message,
+                'number': number,
+                'time': time,
+            })
+        
+    @database_sync_to_async
+    def save_message(self, message, number):
+        # Save the message to the database
+        try:
+            room = ChatRoom.objects.get(room_name=self.room_name)
+        except ChatRoom.DoesNotExist:
+            return
+        
+        user = CustomeUser.objects.get(phonenumber=number)
+        Message.objects.create(
+            room=room,
+            phonenumber=user,
+            content=message
+        )
+
+    async def chat_message(self, e):
         await self.send(text_data=json.dumps({
-            'message': message,
-            'number': number,
+            'message': e['message'],
+            'number': e['number'],
+            'time': e['time'],
         }))

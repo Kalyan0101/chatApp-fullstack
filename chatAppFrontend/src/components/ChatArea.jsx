@@ -23,6 +23,9 @@ function ChatArea({ currentChatUser }) {
     const [chatRoom, setChatRoom] = useState('');
     const [ws, setWs] = useState('');
     const [getMsg, setGetMsg] = useState([])
+    const [chatHistory, setChatHistory] = useState([])
+
+
     const loginUser = useSelector(state => state.userData);  
     
     // toggel between arrow and mic and update setMsg
@@ -78,14 +81,17 @@ function ChatArea({ currentChatUser }) {
             setWs(socket);
         }    
         socket.onmessage = (e) => {
-          const data = JSON.parse(e.data);
+            const data = JSON.parse(e.data);
 
-          console.log(data);
-          
-
-          if(data.message.length !== 0){
-              setGetMsg((pre) => [...pre, data])
+            if(Array.isArray(data.message)){
+                console.log(data.message);
+                setChatHistory(data.message)
+                
+            }            
+            else if(data.message.length !== 0){
+                setGetMsg((pre) => [...pre, data])
             }
+            
         };
         socket.onclose = (e) => {
         }    
@@ -95,9 +101,14 @@ function ChatArea({ currentChatUser }) {
       }, [chatRoom])
 
     const sendMsg = () => {
-        ws.send(JSON.stringify({'message': chatMsg, 'number': loginUser.phonenumber}));
-        setChatMsg('')       
-
+        if(ws && ws.readyState === WebSocket.OPEN){
+            ws.send(JSON.stringify({
+                'message': chatMsg,
+                'number': loginUser.phonenumber,
+                'time': new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})
+            }));
+            setChatMsg('')            
+        }
     }   
 
     return !isUserEmpty ? (
@@ -127,11 +138,19 @@ function ChatArea({ currentChatUser }) {
                 {/* main body */}
                 <main className='bg-[#2C2C2C] w-full h-[80%] pt-1 flex-1'>
                     <ScrollArea className="h-full rounded-md border px-7">
+                        {chatHistory.map((item, index) => <div key={index}>
+                            <Message 
+                                message={item.content}
+                                number={item.phonenumber.phonenumber}
+                                time={item.time}
+                            /> 
+                        </div>)}
                         {getMsg.map((item, index) => <div key={index}>
                             <Message 
                                 message={item.message}
                                 number={item.number}
-                            />                            
+                                time={item.time}
+                            /> 
                         </div>)}
                     </ScrollArea>
                 </main>

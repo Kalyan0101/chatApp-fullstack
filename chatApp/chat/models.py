@@ -10,8 +10,8 @@ class ChatRoom(models.Model):
         return self.room_name
 
 class Message(models.Model):
-    phonenumber = models.ForeignKey(CustomeUser, on_delete=models.CASCADE)
-    room = models.ForeignKey(ChatRoom, related_name='messages', on_delete=models.CASCADE)
+    phonenumber = models.ForeignKey(CustomeUser, related_name='number', on_delete=models.CASCADE)
+    room = models.ForeignKey(ChatRoom, related_name='room', on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 

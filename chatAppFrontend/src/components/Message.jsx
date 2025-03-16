@@ -7,17 +7,17 @@ import { useSelector } from 'react-redux'
 function Message({
   message,
   number,
-  time,
-  side }) {
+  time
+}) {
 
     const loginNumber = useSelector(state => state.userData.phonenumber)
 
   return (
-    <div className={`w-fit my-3 px-2 py-1 rounded-lg text-right ${ loginNumber === number ? "mr-0 ml-auto dark:bg-[#353535]" : "ml-0 mr-auto dark:bg-[#005C4B]"} text-sm`}>
+    <div className={`w-fit my-3 px-2 py-1 rounded-lg text-right ${ loginNumber === number ? "mr-0 ml-auto dark:bg-[#005C4B]" : "ml-0 mr-auto dark:bg-[#353535]"} text-sm`}>
       <p className='text-start'>{message}</p>
       <span
         className='text-[.68rem] opacity-75'>
-        11:30 AM
+        {time}
         <FontAwesomeIcon icon={faCheck} />
       </span>
     </div>
